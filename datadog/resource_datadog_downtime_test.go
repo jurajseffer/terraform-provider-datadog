@@ -42,7 +42,9 @@ func TestAccDatadogDowntime_Basic(t *testing.T) {
 					resource.TestCheckResourceAttr(
 						"datadog_downtime.foo", "message", "Example Datadog downtime message."),
 					resource.TestCheckResourceAttr(
-						"datadog_downtime.foo", "monitor_tags.0", "*"),
+						"datadog_downtime.foo", "monitor_tags.0", "app:webserver"),
+					resource.TestCheckResourceAttr(
+						"datadog_downtime.foo", "monitor_tags.1", "service"),
 				),
 			},
 		},
@@ -304,7 +306,9 @@ func TestAccDatadogDowntime_Updated(t *testing.T) {
 					resource.TestCheckResourceAttr(
 						"datadog_downtime.foo", "message", "Example Datadog downtime message."),
 					resource.TestCheckResourceAttr(
-						"datadog_downtime.foo", "monitor_tags.0", "*"),
+						"datadog_downtime.foo", "monitor_tags.0", "app:webserver"),
+					resource.TestCheckResourceAttr(
+						"datadog_downtime.foo", "monitor_tags.1", "service"),
 				),
 			},
 			{
@@ -493,7 +497,7 @@ resource "datadog_downtime" "foo" {
   }
 
 	message = "Example Datadog downtime message."
-  monitor_tags = ["*"]
+  monitor_tags = ["service", "app:webserver"]
 }
 `
 
