@@ -136,7 +136,10 @@ func resourceDatadogDowntime() *schema.Resource {
 				Description:   "When specified, this downtime will only apply to this monitor",
 			},
 			"monitor_tags": {
-				Type:        schema.TypeList,
+				// we use TypeSet to represent tags, paradoxically to be able to maintain them ordered;
+				// we order them explicitly in the read/create/update methods of this resource and using
+				// TypeSet makes Terraform ignore differences in order when creating a plan
+				Type:        schema.TypeSet,
 				Optional:    true,
 				Description: "A list of monitor tags (up to 25), i.e. tags that are applied directly to monitors to which the downtime applies",
 				// MonitorTags conflicts with MonitorId and it also has a default of `["*"]`, which brings some problems:
@@ -273,7 +276,7 @@ func buildDowntimeStruct(authV1 context.Context, d *schema.ResourceData, client 
 	}
 	dt.SetScope(scope)
 	var tags []string
-	for _, mt := range d.Get("monitor_tags").([]interface{}) {
+	for _, mt := range d.Get("monitor_tags").(*schema.Set).List() {
 		tags = append(tags, mt.(string))
 	}
 	sort.Strings(tags)
